@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Support Bot - Test Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #000;
+            margin: 0 0 10px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
+        }
+        
+        h2 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            margin: 50px 0 20px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        h3 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin: 40px 0 15px 0;
+            padding: 10px 0;
+        }
+        
+        h4 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            margin: 50px 0 20px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        h4.subsection {
+            font-size: 14px;
+            margin: 15px 0 8px 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .document-header {
+            margin-bottom: 30px;
+        }
+        
+        .document-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0 20px 0;
+        }
+        
+        .overview-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 30px;
+            background-color: #fafafa;
+        }
+        
+        .overview-box p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+        
+        th {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #000;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            vertical-align: top;
+        }
+        
+        /* Removed alternating row colors to allow category-specific backgrounds */
+        
+        .category-label {
+            font-weight: bold;
+        }
+        
+        .critical {
+            background-color: #f5f5f5;
+            border: 2px solid #000;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        /* Category Group Color Coding - Left Bar Only */
+        .group-basic { 
+            border-left: 4px solid #c62828;
+        }
+        .group-decision { 
+            border-left: 4px solid #f9a825;
+        }
+        .group-data { 
+            border-left: 4px solid #43a047;
+        }
+        .group-robust { 
+            border-left: 4px solid #1e88e5;
+        }
+        .group-advanced { 
+            border-left: 4px solid #8e24aa;
+        }
+        
+        /* Individual Category Colors - Left Bar + Light Background */
+        .category-a { 
+            border-left: 4px solid #c62828;
+            background-color: #ffebee;  /* Very light red */
+        }
+        .category-b, .category-c { 
+            border-left: 4px solid #f9a825;
+            background-color: #fffde7;  /* Very light yellow */
+        }
+        .category-d, .category-e { 
+            border-left: 4px solid #43a047;
+            background-color: #f1f8e9;  /* Very light green */
+        }
+        .category-f, .category-g { 
+            border-left: 4px solid #1e88e5;
+            background-color: #e3f2fd;  /* Very light blue */
+        }
+        .category-h { 
+            border-left: 4px solid #8e24aa;
+            background-color: #f3e5f5;  /* Very light purple */
+        }
+        
+        /* Keep headers grey/black, not colored */
+        .category-a th, .category-b th, .category-c th, 
+        .category-d th, .category-e th, .category-f th, 
+        .category-g th, .category-h th { 
+            background-color: #333; 
+            color: #fff; 
+        }
+        
+        .section-header-category {
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #000;
+        }
+        
+        .badge-music { background-color: #fff; }
+        .badge-customer { background-color: #fff; }
+        .badge-general { background-color: #fff; }
+        
+        .test-question {
+            font-style: italic;
+        }
+        
+        .section-intro {
+            background-color: #f9f9f9;
+            border-left: 3px solid #333;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .section-intro p {
+            margin: 8px 0;
+        }
+        
+        .section-intro ul {
+            margin: 8px 0;
+            padding-left: 25px;
+        }
+        
+        .section-intro ul li {
+            margin: 4px 0;
+        }
+        
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border: 1px solid #ddd;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            border: 2px solid #333;
+            padding: 20px;
+            text-align: center;
+            background-color: #fff;
+        }
+        
+        .stat-card h3 {
+            margin: 0;
+            font-size: 36px;
+            font-weight: bold;
+            color: #000;
+        }
+        
+        .stat-card p {
+            margin: 8px 0 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .priority-high { 
+            font-weight: bold; 
+        }
+        
+        strong {
+            font-weight: bold;
+        }
+        
+        .note {
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="document-header">
+        <h1>Test Suite - SQL Support Bot</h1>
+        <p class="document-subtitle">Zachary Xi - LangChain Takehome Test Suite</p>
+    </div>
+
+    <div class="section-intro">
+        <h4>Executive Summary</h4>
+        
+        <p><strong>Overall Goal:</strong> Provide comprehensive test coverage that validates core functionality, measures decision-making accuracy, and ensures robustness under edge cases.</p>
+        
+        <p style="margin-top: 15px;"><strong>Test Suite Overview:</strong> 55 tests across 8 categories (Music Agent: 30 tests | Customer Agent: 20 tests | General Agent: 5 tests)</p>
+        
+        <table style="margin-top: 15px;">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Category Group</th>
+                    <th style="width: 25%;">Goal</th>
+                    <th style="width: 25%;">Method</th>
+                    <th style="width: 25%;">Coverage</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="group-basic">
+                    <td><strong>Basic Functionality First</strong><br>(Category A)</td>
+                    <td>Verify core features work correctly</td>
+                    <td>Send straightforward queries across all agents</td>
+                    <td>Agent routing, tool selection, parameter extraction, valid responses</td>
+                </tr>
+                <tr class="group-decision">
+                    <td><strong>Core Decision-Making</strong><br>(Categories B, C)</td>
+                    <td>Validate routing and tool selection accuracy</td>
+                    <td>Test keyword recognition, context understanding, and tool distinction</td>
+                    <td>B = Route to correct agent<br>C = Call correct tool</td>
+                </tr>
+                <tr class="group-data">
+                    <td><strong>Data Processing</strong><br>(Categories D, E)</td>
+                    <td>Ensure accurate entity extraction and database handling</td>
+                    <td>Test various name formats, typos, and data scenarios</td>
+                    <td>D = Extract parameters (names, IDs, special chars)<br>E = Handle existing/missing data</td>
+                </tr>
+                <tr class="group-robust">
+                    <td><strong>Robustness</strong><br>(Categories F, G)</td>
+                    <td>Assess system resilience under unusual conditions</td>
+                    <td>Test edge cases and out-of-scope requests</td>
+                    <td>F = Verbose input, case sensitivity, gibberish<br>G = Capability limits, error messages</td>
+                </tr>
+                <tr class="group-advanced">
+                    <td><strong>Advanced Features</strong><br>(Category H)</td>
+                    <td>Evaluate conversational capabilities</td>
+                    <td>Test multi-turn interactions and complex requests</td>
+                    <td>Ask for missing info, handle multi-part requests, context retention</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>1. Test Categories Overview</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 15%;">Category</th>
+                <th style="width: 8%;">Count</th>
+                <th style="width: 22%;">Testing Focus</th>
+                <th style="width: 25%;">Validation Criteria</th>
+                <th style="width: 30%;">Subcategories</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="category-a">
+                <td class="category-label">A. Happy Path</td>
+                <td>12</td>
+                <td>Core functionality works correctly</td>
+                <td>
+                    Agent routing<br>
+                    Tool selection<br>
+                    Parameter extraction<br>
+                    Valid responses
+                </td>
+                <td>
+                    Music/Songs (3)<br>
+                    Music/Albums (2)<br>
+                    Music/Song Lookup (1)<br>
+                    Music/Generic (1)<br>
+                    Customer (3)<br>
+                    General (2)
+                </td>
+            </tr>
+            <tr class="category-b">
+                <td class="category-label">B. Routing Accuracy</td>
+                <td>8</td>
+                <td>Queries route to correct agent</td>
+                <td>
+                    Keyword recognition<br>
+                    Contextual routing<br>
+                    Out-of-scope detection
+                </td>
+                <td>
+                    Music Routing (3)<br>
+                    Customer Routing (3)<br>
+                    Out-of-Scope (2)
+                </td>
+            </tr>
+            <tr class="category-c">
+                <td class="category-label">C. Tool Selection*</td>
+                <td>10</td>
+                <td>Correct tool called for each query type</td>
+                <td>
+                    Albums vs Songs distinction<br>
+                    Artist vs Song name<br>
+                    Correct parameters<br>
+                    Wrong tools NOT called
+                </td>
+                <td>
+                    Albums vs Songs (4)<br>
+                    Artist vs Song Name (3)<br>
+                    Tool Efficiency (1)<br>
+                    Customer Tool (2)
+                </td>
+            </tr>
+            <tr class="category-d">
+                <td class="category-label">D. Parameter Extraction</td>
+                <td>5</td>
+                <td>Entities correctly extracted</td>
+                <td>
+                    Full names captured<br>
+                    Special chars preserved<br>
+                    Multi-word names<br>
+                    Numeric IDs parsed
+                </td>
+                <td>
+                    Artist Extraction (3)<br>
+                    Customer ID Extraction (2)
+                </td>
+            </tr>
+            <tr class="category-e">
+                <td class="category-label">E. Data Handling</td>
+                <td>6</td>
+                <td>Database interactions</td>
+                <td>
+                    Returns results when data exists<br>
+                    Graceful failures<br>
+                    Fuzzy matching typos<br>
+                    No crashes
+                </td>
+                <td>
+                    Existing Data (2)<br>
+                    Nonexistent Data (2)<br>
+                    Fuzzy Matching (2)
+                </td>
+            </tr>
+            <tr class="category-f">
+                <td class="category-label">F. Edge Cases</td>
+                <td>5</td>
+                <td>Robustness with unusual inputs</td>
+                <td>
+                    Verbose queries<br>
+                    Case insensitivity<br>
+                    No punctuation<br>
+                    Gibberish handled
+                </td>
+                <td>
+                    Verbose Input (1)<br>
+                    Case Handling (3)<br>
+                    Gibberish (1)
+                </td>
+            </tr>
+            <tr class="category-g">
+                <td class="category-label">G. Error Handling</td>
+                <td>4</td>
+                <td>Capability limits respected</td>
+                <td>
+                    Clear explanations<br>
+                    Reject delete/update<br>
+                    Invalid input handling<br>
+                    Suggest alternatives
+                </td>
+                <td>
+                    Out of Capability (1)<br>
+                    Capability Boundaries (3)
+                </td>
+            </tr>
+            <tr class="category-h">
+                <td class="category-label">H. Multi-turn</td>
+                <td>5</td>
+                <td>Conversation flow and context</td>
+                <td>
+                    Ask for missing info<br>
+                    Handle multi-requests<br>
+                    Natural clarifications<br>
+                    Multiple tools
+                </td>
+                <td>
+                    Music Conversations (3)<br>
+                    Customer Conversations (2)
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>2. Detailed Test Breakdown</h2>
+
+    <!-- CATEGORY A: Happy Path -->
+    <h3>A. Happy Path Tests (12 tests)</h3>
+    <div class="section-intro section-header-category category-a">
+        <p>Verify core functionality works correctly with straightforward queries across all agents (music, customer, general).</p>
+    </div>
+    
+    <table class="category-a">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Test ID</th>
+                    <th style="width: 15%;">Subcategory</th>
+                    <th style="width: 35%;">Question</th>
+                    <th style="width: 12%;">Agent</th>
+                    <th style="width: 20%;">Expected Tool</th>
+                    <th style="width: 10%;">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>A1.1</td>
+                    <td>Music/Songs</td>
+                    <td class="test-question">"Find songs by U2"</td>
+                    <td><span class="badge badge-music">music</span></td>
+                    <td><code>get_tracks_by_artist</code></td>
+                    <td>Basic search</td>
+                </tr>
+                <tr>
+                    <td>A1.2</td>
+                    <td>Music/Songs</td>
+                    <td class="test-question">"What songs does AC/DC have?"</td>
+                    <td><span class="badge badge-music">music</span></td>
+                    <td><code>get_tracks_by_artist</code></td>
+                    <td>Special chars</td>
+                </tr>
+                <tr>
+                    <td>A1.3</td>
+                    <td>Music/Songs</td>
+                    <td class="test-question">"Show me tracks by Metallica"</td>
+                    <td><span class="badge badge-music">music</span></td>
+                    <td><code>get_tracks_by_artist</code></td>
+                    <td>Synonym test</td>
+                </tr>
+                <tr>
+                    <td>A2.1</td>
+                    <td>Music/Albums</td>
+                    <td class="test-question">"What albums does Iron Maiden have?"</td>
+                    <td><span class="badge badge-music">music</span></td>
+                    <td><code>get_albums_by_artist</code></td>
+                    <td>Album query</td>
+                </tr>
+                <tr>
+                    <td>A2.2</td>
+                    <td>Music/Albums</td>
+                    <td class="test-question">"Show me albums by Led Zeppelin"</td>
+                    <td><span class="badge badge-music">music</span></td>
+                    <td><code>get_albums_by_artist</code></td>
+                    <td>Album query</td>
+                </tr>
+                <tr>
+                    <td>A1.4</td>
+                    <td>Music/Generic</td>
+                    <td class="test-question">"Music by Aerosmith"</td>
+                    <td><span class="badge badge-music">music</span></td>
+                    <td><code>get_tracks_by_artist</code></td>
+                    <td>Generic music</td>
+                </tr>
+                <tr>
+                    <td>A5.1</td>
+                    <td>Music/Song Lookup</td>
+                    <td class="test-question">"Do you have the song 'One'?"</td>
+                    <td><span class="badge badge-music">music</span></td>
+                    <td><code>check_for_songs</code></td>
+                    <td>Song existence</td>
+                </tr>
+                <tr>
+                    <td>A4.1</td>
+                    <td>Customer</td>
+                    <td class="test-question">"I'm customer 5, what's my email?"</td>
+                    <td><span class="badge badge-customer">customer</span></td>
+                    <td><code>get_customer_info</code></td>
+                    <td>Customer lookup</td>
+                </tr>
+                <tr>
+                    <td>A4.2</td>
+                    <td>Customer</td>
+                    <td class="test-question">"Look up customer 10"</td>
+                    <td><span class="badge badge-customer">customer</span></td>
+                    <td><code>get_customer_info</code></td>
+                    <td>Direct lookup</td>
+                </tr>
+                <tr>
+                    <td>A4.3</td>
+                    <td>Customer</td>
+                    <td class="test-question">"Customer 15's information please"</td>
+                    <td><span class="badge badge-customer">customer</span></td>
+                    <td><code>get_customer_info</code></td>
+                    <td>Polite request</td>
+                </tr>
+                <tr>
+                    <td>A5.1</td>
+                    <td>General</td>
+                    <td class="test-question">"Hello"</td>
+                    <td><span class="badge badge-general">general</span></td>
+                    <td>-</td>
+                    <td>Greeting</td>
+                </tr>
+                <tr>
+                    <td>A5.2</td>
+                    <td>General</td>
+                    <td class="test-question">"What can you help me with?"</td>
+                    <td><span class="badge badge-general">general</span></td>
+                    <td>-</td>
+                    <td>Capabilities</td>
+                </tr>
+            </tbody>
+        </table>
+
+    <!-- CATEGORY B: Routing Accuracy -->
+    <h3>B. Routing Accuracy Tests (8 tests)</h3>
+    <div class="section-intro section-header-category category-b">
+        <p>Verify queries route to the correct agent (music, customer, or general) based on keywords and contextual intent.</p>
+    </div>
+    
+    <table class="category-b">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Test ID</th>
+                <th style="width: 18%;">Subcategory</th>
+                <th style="width: 40%;">Question</th>
+                <th style="width: 14%;">Expected Agent</th>
+                <th style="width: 20%;">Key Signal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>B1.1</td>
+                <td>Music Routing</td>
+                <td class="test-question">"I want to find some rock songs"</td>
+                <td><span class="badge badge-music">music</span></td>
+                <td>Keyword: "songs"</td>
+            </tr>
+            <tr>
+                <td>B1.2</td>
+                <td>Music Routing</td>
+                <td class="test-question">"What do you have by The Beatles?"</td>
+                <td><span class="badge badge-music">music</span></td>
+                <td>Contextual music query</td>
+            </tr>
+            <tr>
+                <td>B1.3</td>
+                <td>Music Routing</td>
+                <td class="test-question">"I'm looking for some albums"</td>
+                <td><span class="badge badge-music">music</span></td>
+                <td>Keyword: "albums"</td>
+            </tr>
+            <tr>
+                <td>B2.1</td>
+                <td>Customer Routing</td>
+                <td class="test-question">"What's in my account?"</td>
+                <td><span class="badge badge-customer">customer</span></td>
+                <td>Keyword: "account"</td>
+            </tr>
+            <tr>
+                <td>B2.2</td>
+                <td>Customer Routing</td>
+                <td class="test-question">"I need to check my profile"</td>
+                <td><span class="badge badge-customer">customer</span></td>
+                <td>Keyword: "profile"</td>
+            </tr>
+            <tr>
+                <td>B2.3</td>
+                <td>Customer Routing</td>
+                <td class="test-question">"Can I see my customer information?"</td>
+                <td><span class="badge badge-customer">customer</span></td>
+                <td>Keywords: "customer", "information"</td>
+            </tr>
+            <tr>
+                <td>B3.1</td>
+                <td>Out-of-Scope</td>
+                <td class="test-question">"What are your business hours?"</td>
+                <td><span class="badge badge-general">general</span></td>
+                <td>Should not route</td>
+            </tr>
+            <tr>
+                <td>B3.2</td>
+                <td>Out-of-Scope</td>
+                <td class="test-question">"How do I return a purchase?"</td>
+                <td><span class="badge badge-general">general</span></td>
+                <td>Should explain limitations</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- CATEGORY C: Tool Selection (Most Critical) -->
+    <h3>C. Tool Selection Tests (10 tests) - MOST CRITICAL</h3>
+    <div class="section-intro section-header-category category-c">
+        <p>Verify the correct tool is called for each query type, distinguishing between similar requests (e.g., "albums" vs "songs", artist search vs song name search).</p>
+    </div>
+    
+    <table class="category-c">
+            <thead>
+                <tr>
+                    <th style="width: 8%;">Test ID</th>
+                    <th style="width: 18%;">Subcategory</th>
+                    <th style="width: 35%;">Question</th>
+                    <th style="width: 20%;">Expected Tool</th>
+                    <th style="width: 19%;">Critical Distinction</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>C1.1</td>
+                    <td>Albums vs Songs</td>
+                    <td class="test-question">"What <strong>albums</strong> does U2 have?"</td>
+                    <td><code>get_albums_by_artist</code></td>
+                    <td>'albums' keyword</td>
+                </tr>
+                <tr>
+                    <td>C1.2</td>
+                    <td>Albums vs Songs</td>
+                    <td class="test-question">"What <strong>songs</strong> does U2 have?"</td>
+                    <td><code>get_tracks_by_artist</code></td>
+                    <td>'songs' keyword</td>
+                </tr>
+                <tr>
+                    <td>C1.3</td>
+                    <td>Albums vs Songs</td>
+                    <td class="test-question">"Show me <strong>tracks</strong> by Iron Maiden"</td>
+                    <td><code>get_tracks_by_artist</code></td>
+                    <td>'tracks' = songs</td>
+                </tr>
+                <tr>
+                    <td>C1.4</td>
+                    <td>Albums vs Songs</td>
+                    <td class="test-question">"What <strong>records</strong> does Pink Floyd have?"</td>
+                    <td><code>get_albums_by_artist</code></td>
+                    <td>'records' = albums</td>
+                </tr>
+                <tr>
+                    <td>C2.1</td>
+                    <td>Artist vs Song Name</td>
+                    <td class="test-question">"Find music <strong>by Metallica</strong>"</td>
+                    <td><code>get_tracks_by_artist</code></td>
+                    <td>Search BY artist</td>
+                </tr>
+                <tr>
+                    <td>C2.2</td>
+                    <td>Artist vs Song Name</td>
+                    <td class="test-question">"Do you have '<strong>Bohemian Rhapsody</strong>'?"</td>
+                    <td><code>check_for_songs</code></td>
+                    <td>Search FOR song name</td>
+                </tr>
+                <tr>
+                    <td>C2.3</td>
+                    <td>Artist vs Song Name</td>
+                    <td class="test-question">"Find the song '<strong>Beautiful Day</strong>'"</td>
+                    <td><code>check_for_songs</code></td>
+                    <td>Song title with quotes</td>
+                </tr>
+                <tr>
+                    <td>C3.1</td>
+                    <td>Tool Efficiency</td>
+                    <td class="test-question">"Do you have 'One' by U2?"</td>
+                    <td><code>check_for_songs</code></td>
+                    <td>No unnecessary tools</td>
+                </tr>
+                <tr>
+                    <td>C4.1</td>
+                    <td>Customer Tool</td>
+                    <td class="test-question">"Look up customer 20"</td>
+                    <td><code>get_customer_info</code></td>
+                    <td>customer_id=20</td>
+                </tr>
+                <tr>
+                    <td>C4.2</td>
+                    <td>Customer Tool</td>
+                    <td class="test-question">"Get info for customer 25"</td>
+                    <td><code>get_customer_info</code></td>
+                    <td>customer_id=25</td>
+                </tr>
+            </tbody>
+        </table>
+
+    <!-- CATEGORY D: Parameter Extraction -->
+    <h3>D. Parameter Extraction Tests (5 tests)</h3>
+    <div class="section-intro section-header-category category-d">
+        <p>Verify correct extraction of entities (artist names, customer IDs) from natural language, including multi-word names and special characters.</p>
+    </div>
+    
+    <table class="category-d">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Test ID</th>
+                <th style="width: 20%;">Subcategory</th>
+                <th style="width: 35%;">Question</th>
+                <th style="width: 22%;">Expected Parameter</th>
+                <th style="width: 15%;">Challenge</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>D1.1</td>
+                <td>Artist Extraction</td>
+                <td class="test-question">"Songs by Madonna"</td>
+                <td>artist="Madonna"</td>
+                <td>Simple name</td>
+            </tr>
+            <tr>
+                <td>D1.2</td>
+                <td>Artist Extraction</td>
+                <td class="test-question">"Albums by Iron Maiden"</td>
+                <td>artist="Iron Maiden"</td>
+                <td>Multi-word name</td>
+            </tr>
+            <tr>
+                <td>D1.3</td>
+                <td>Artist Extraction</td>
+                <td class="test-question">"Music by AC/DC"</td>
+                <td>artist="AC/DC"</td>
+                <td>Special characters (/)</td>
+            </tr>
+            <tr>
+                <td>D2.1</td>
+                <td>Customer ID Extraction</td>
+                <td class="test-question">"I'm customer number 42"</td>
+                <td>customer_id=42</td>
+                <td>Natural language</td>
+            </tr>
+            <tr>
+                <td>D2.2</td>
+                <td>Customer ID Extraction</td>
+                <td class="test-question">"Customer ID: 30"</td>
+                <td>customer_id=30</td>
+                <td>Colon format</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- CATEGORY E: Data Handling -->
+    <h3>E. Data Handling Tests (6 tests)</h3>
+    <div class="section-intro section-header-category category-e">
+        <p>Test database interactions with existing data, missing data, and fuzzy matching for typos without crashes or SQL errors.</p>
+    </div>
+    
+    <table class="category-e">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Test ID</th>
+                <th style="width: 20%;">Subcategory</th>
+                <th style="width: 37%;">Question</th>
+                <th style="width: 35%;">Expected Behavior</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>E1.1</td>
+                <td>Existing Data</td>
+                <td class="test-question">"Songs by U2"</td>
+                <td>Should return many results</td>
+            </tr>
+            <tr>
+                <td>E1.2</td>
+                <td>Existing Data</td>
+                <td class="test-question">"Customer 5 information"</td>
+                <td>Should return customer info</td>
+            </tr>
+            <tr>
+                <td>E2.1</td>
+                <td>Nonexistent Data</td>
+                <td class="test-question">"Songs by Taylor Swift"</td>
+                <td>Graceful failure message</td>
+            </tr>
+            <tr>
+                <td>E2.2</td>
+                <td>Nonexistent Data</td>
+                <td class="test-question">"Look up customer 99999"</td>
+                <td>Graceful failure message</td>
+            </tr>
+            <tr>
+                <td>E3.1</td>
+                <td>Fuzzy Matching</td>
+                <td class="test-question">"Songs by Beetles"</td>
+                <td>Match "The Beatles" via LIKE</td>
+            </tr>
+            <tr>
+                <td>E3.2</td>
+                <td>Edge Data</td>
+                <td class="test-question">"Customer 59 information"</td>
+                <td>Last valid customer ID</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- CATEGORY F: Edge Cases -->
+    <h3>F. Edge Cases Tests (5 tests)</h3>
+    <div class="section-intro section-header-category category-f">
+        <p>Test robustness with unusual inputs: verbose queries, extreme formatting (ALL CAPS, no punctuation), and nonsensical input.</p>
+    </div>
+    
+    <table class="category-f">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Test ID</th>
+                <th style="width: 20%;">Subcategory</th>
+                <th style="width: 50%;">Question</th>
+                <th style="width: 22%;">Challenge</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>F1.1</td>
+                <td>Verbose Input</td>
+                <td class="test-question">"Hi I'm looking for music and I was wondering if you could help me find songs by U2"</td>
+                <td>Extract from verbose query</td>
+            </tr>
+            <tr>
+                <td>F2.1</td>
+                <td>Case Handling</td>
+                <td class="test-question">"SONGS BY U2"</td>
+                <td>All caps input</td>
+            </tr>
+            <tr>
+                <td>F2.2</td>
+                <td>Case Handling</td>
+                <td class="test-question">"CUSTOMER 10 EMAIL"</td>
+                <td>All caps customer query</td>
+            </tr>
+            <tr>
+                <td>F2.3</td>
+                <td>Case Handling</td>
+                <td class="test-question">"i'm customer 7 what's my info"</td>
+                <td>All lowercase, no punctuation</td>
+            </tr>
+            <tr>
+                <td>F3.1</td>
+                <td>Gibberish</td>
+                <td class="test-question">"asdfghjkl"</td>
+                <td>Should not crash</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- CATEGORY G: Error Handling -->
+    <h3>G. Error Handling Tests (4 tests)</h3>
+    <div class="section-intro section-header-category category-g">
+        <p>Verify the agent clearly explains capability limits when users request unauthorized operations (delete, update) or provide invalid inputs.</p>
+    </div>
+    
+    <table class="category-g">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Test ID</th>
+                <th style="width: 22%;">Subcategory</th>
+                <th style="width: 45%;">Question</th>
+                <th style="width: 25%;">Expected Behavior</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>G1.1</td>
+                <td>Out of Capability</td>
+                <td class="test-question">"Delete all songs by U2"</td>
+                <td>Explain cannot delete</td>
+            </tr>
+            <tr>
+                <td>G2.1</td>
+                <td>Capability Boundary</td>
+                <td class="test-question">"Update my email to newemail@example.com"</td>
+                <td>Explain lookup-only capability</td>
+            </tr>
+            <tr>
+                <td>G2.2</td>
+                <td>Capability Boundary</td>
+                <td class="test-question">"Delete my account"</td>
+                <td>Explain cannot delete</td>
+            </tr>
+            <tr>
+                <td>G2.3</td>
+                <td>Invalid Input</td>
+                <td class="test-question">"Look up customer -5"</td>
+                <td>Handle negative ID gracefully</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- CATEGORY H: Multi-turn -->
+    <h3>H. Multi-turn Conversation Tests (5 tests)</h3>
+    <div class="section-intro section-header-category category-h">
+        <p>Test conversational capabilities: asking for missing information, handling multi-part requests, and maintaining context across interactions.</p>
+    </div>
+    
+    <table class="category-h">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Test ID</th>
+                <th style="width: 22%;">Subcategory</th>
+                <th style="width: 45%;">Question</th>
+                <th style="width: 25%;">Expected Behavior</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>H1.1</td>
+                <td>Music Conversation</td>
+                <td class="test-question">"I'm looking for music"</td>
+                <td>Should ask which artist</td>
+            </tr>
+            <tr>
+                <td>H1.2</td>
+                <td>Music Conversation</td>
+                <td class="test-question">"What albums does U2 have?"</td>
+                <td>Setup for follow-up test</td>
+            </tr>
+            <tr>
+                <td>H1.3</td>
+                <td>Music Multi-Request</td>
+                <td class="test-question">"Show me both albums and songs by Aerosmith"</td>
+                <td>Call multiple tools</td>
+            </tr>
+            <tr>
+                <td>H2.1</td>
+                <td>Customer Conversation</td>
+                <td class="test-question">"What's my email?"</td>
+                <td>Should ask for customer ID</td>
+            </tr>
+            <tr>
+                <td>H2.2</td>
+                <td>Customer Conversation</td>
+                <td class="test-question">"I need help with my account"</td>
+                <td>Should ask for ID</td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
+

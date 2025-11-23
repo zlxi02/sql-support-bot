@@ -4,3 +4,6 @@ langchain-community
 scikit-learn
 langgraph-checkpoint-sqlite
 python-dotenv
+notebook
+langsmith
+tqdm

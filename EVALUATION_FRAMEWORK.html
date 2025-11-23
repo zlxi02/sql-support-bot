@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Support Bot - Evaluation Framework Architecture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #ffffff;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #000;
+            margin: 0 0 10px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #000;
+        }
+        
+        h2 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            margin: 50px 0 20px 0;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ccc;
+        }
+        
+        h3 {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000;
+            margin: 30px 0 15px 0;
+        }
+        
+        h4 {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            margin: 15px 0 8px 0;
+        }
+        
+        .document-header {
+            margin-bottom: 30px;
+        }
+        
+        .document-subtitle {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0 20px 0;
+        }
+        
+        .overview-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin-bottom: 30px;
+            background-color: #fafafa;
+        }
+        
+        .overview-box p {
+            margin: 6px 0;
+            font-size: 14px;
+        }
+        
+        .overview-box strong {
+            color: #000;
+        }
+        
+        .executive-summary {
+            border: 2px solid #000;
+            padding: 25px;
+            margin-bottom: 40px;
+            background-color: #fafafa;
+        }
+        
+        .executive-summary h2 {
+            margin-top: 0;
+            border-bottom: none;
+            padding-bottom: 10px;
+        }
+        
+        .executive-summary p {
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        
+        .architecture-box {
+            border: 1px solid #ccc;
+            padding: 25px;
+            margin: 25px 0;
+            background-color: #f9f9f9;
+        }
+        
+        .architecture-box p {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        
+        .component-box {
+            border: 1px solid #999;
+            padding: 15px;
+            margin: 15px 0;
+            background-color: #fff;
+        }
+        
+        .component-box h4 {
+            margin-top: 0;
+            color: #000;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 13px;
+        }
+        
+        th {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #000;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            vertical-align: top;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .code-block {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+        
+        .workflow-step {
+            margin: 20px 0;
+            padding-left: 20px;
+            border-left: 3px solid #333;
+        }
+        
+        .workflow-step h4 {
+            margin-top: 0;
+        }
+        
+        ul, ol {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .metric {
+            display: inline-block;
+            padding: 3px 8px;
+            margin: 2px;
+            background-color: #e8e8e8;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .design-decision {
+            border-left: 3px solid #333;
+            padding-left: 15px;
+            margin: 20px 0;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="document-header">
+        <h1>Evaluation Framework - SQL Support Bot</h1>
+        <div class="document-subtitle">
+            Zachary Xi - LangChain Takehome Evaluation Framework
+        </div>
+    </div>
+
+    <div class="executive-summary">
+        <h2>Executive Summary</h2>
+        
+        <h3 style="margin-top: 15px;">Goal</h3>
+        <p>Test SQL support bot capabilities (routing, tool calling, parameter extraction, error handling) and enable rapid iteration with automated performance measurement.</p>
+        
+        <h3 style="margin-top: 25px;">System Architecture</h3>
+        <table style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Component</th>
+                    <th>Function</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Agent Configuration</strong></td>
+                    <td>Centralized prompts and tool definitions with baseline vs current configs for A/B testing</td>
+                </tr>
+                <tr>
+                    <td><strong>Test Dataset</strong></td>
+                    <td>55 comprehensive tests across 8 categories (happy path, routing, tool selection, parameters, data handling, edge cases, errors, multi-turn)</td>
+                </tr>
+                <tr>
+                    <td><strong>Evaluators</strong></td>
+                    <td>8 automated evaluators checking routing, tools, parameters, and response quality with detailed pass/fail comments</td>
+                </tr>
+                <tr>
+                    <td><strong>Evaluation Harness</strong></td>
+                    <td>Orchestration layer that runs tests, applies evaluators, aggregates results, and generates reports</td>
+                </tr>
+                <tr>
+                    <td><strong>Iteration Helpers</strong></td>
+                    <td>4 functions for rapid testing (single query, sample, category, full comparison) optimized for 30-second to 5-minute cycles</td>
+                </tr>
+                <tr>
+                    <td><strong>LangSmith Integration</strong></td>
+                    <td>Automatic tracing, dataset management, and evaluation tracking</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3 style="margin-top: 25px;">Iteration Capabilities</h3>
+        <p><strong>Full Evaluation:</strong> Run all 55 tests with comprehensive reporting and comparison analysis</p>
+        <p><strong>Selective Testing Toolkit:</strong> Category-specific testing, sample-based smoke tests, and single query debugging for targeted iteration</p>
+        
+        <h3 style="margin-top: 25px;">Agent Performance</h3>
+        <p><strong>Baseline:</strong> 94.5% pass rate (52/55 tests)</p>
+        <p><strong>Failures:</strong> 3 tests (fuzzy matching for typos, natural language parameter extraction, out-of-scope routing)</p>
+    </div>
+
+    <h2>1. Core Components</h2>
+
+    <div class="component-box">
+        <h4>Component 1: Agent Configuration (agent_config.py)</h4>
+        <p><strong>Purpose:</strong> Centralize all agent logic for easy modification during live interviews</p>
+        
+        <table style="margin-top: 15px;">
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Element</th>
+                    <th style="width: 50%;">Description</th>
+                    <th style="width: 25%;">Interview Use</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Prompts</strong></td>
+                    <td>GENERAL_PROMPT, MUSIC_PROMPT, CUSTOMER_PROMPT - system instructions for each agent</td>
+                    <td>Primary modification target</td>
+                </tr>
+                <tr>
+                    <td><strong>Tools</strong></td>
+                    <td>get_tracks_by_artist, get_albums_by_artist, get_customer_info, check_for_songs</td>
+                    <td>Secondary modification target</td>
+                </tr>
+                <tr>
+                    <td><strong>CONFIGS</strong></td>
+                    <td>Dictionary with "baseline" and "current" configurations for A/B testing</td>
+                    <td>Enables comparison workflows</td>
+                </tr>
+                <tr>
+                    <td><strong>build_graph()</strong></td>
+                    <td>Function that constructs LangGraph from a config (routing logic, nodes, edges)</td>
+                    <td>No changes needed</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="component-box">
+        <h4>Component 2: Test Dataset (tests.py)</h4>
+        <p><strong>Purpose:</strong> Comprehensive test coverage across all agent capabilities</p>
+        <p><strong>Structure:</strong> Each test includes inputs (query) and expected outputs (agent, tool, params, content)</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Tests</th>
+                    <th>Coverage</th>
+                    <th>Focus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>A. Happy Path</strong></td>
+                    <td>12</td>
+                    <td>22%</td>
+                    <td>Basic functionality: songs, albums, customer lookups</td>
+                </tr>
+                <tr>
+                    <td><strong>B. Routing</strong></td>
+                    <td>8</td>
+                    <td>15%</td>
+                    <td>Correct agent selection (music vs customer vs general)</td>
+                </tr>
+                <tr>
+                    <td><strong>C. Tool Selection</strong></td>
+                    <td>10</td>
+                    <td>18%</td>
+                    <td>Albums vs songs, artist vs song name disambiguation</td>
+                </tr>
+                <tr>
+                    <td><strong>D. Parameter Extraction</strong></td>
+                    <td>5</td>
+                    <td>9%</td>
+                    <td>Extracting artist names, customer IDs from queries</td>
+                </tr>
+                <tr>
+                    <td><strong>E. Data Handling</strong></td>
+                    <td>6</td>
+                    <td>11%</td>
+                    <td>Existing data, missing data, fuzzy matching (typos)</td>
+                </tr>
+                <tr>
+                    <td><strong>F. Edge Cases</strong></td>
+                    <td>5</td>
+                    <td>9%</td>
+                    <td>Unusual queries, boundary conditions</td>
+                </tr>
+                <tr>
+                    <td><strong>G. Error Handling</strong></td>
+                    <td>4</td>
+                    <td>7%</td>
+                    <td>Out-of-scope queries, capability limits</td>
+                </tr>
+                <tr>
+                    <td><strong>H. Multi-Turn</strong></td>
+                    <td>5</td>
+                    <td>9%</td>
+                    <td>Conversation context, follow-up queries</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="component-box">
+        <h4>Component 3: Evaluators (evals.ipynb - Cell 4)</h4>
+        <p><strong>Purpose:</strong> Automated checking of agent behavior against expectations</p>
+        <p><strong>Architecture:</strong> Helper functions + 8 specialized evaluators + aggregate function</p>
+
+        <h4 style="margin-top: 20px;">Helper Functions (Extract Data from Traces)</h4>
+        <table style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th style="width: 35%;">Helper Function</th>
+                    <th style="width: 35%;">Extracts</th>
+                    <th style="width: 30%;">Returns</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>get_agents_from_trace(run)</code></td>
+                    <td>Which agents were invoked</td>
+                    <td>List of agent names</td>
+                </tr>
+                <tr>
+                    <td><code>get_tool_calls_from_trace(run)</code></td>
+                    <td>Which tools were called with what parameters</td>
+                    <td>List of tool calls with arguments</td>
+                </tr>
+                <tr>
+                    <td><code>get_final_response(run)</code></td>
+                    <td>Final text response to user</td>
+                    <td>String response</td>
+                </tr>
+                <tr>
+                    <td><code>get_tool_results_from_trace(run)</code></td>
+                    <td>Data returned by tools</td>
+                    <td>Tool output data</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4 style="margin-top: 20px;">Evaluator Functions (Compare Expected vs Actual)</h4>
+        <table style="margin-top: 10px;">
+            <thead>
+                <tr>
+                    <th>Evaluator</th>
+                    <th>Checks</th>
+                    <th>Returns</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>check_routing</code></td>
+                    <td>Expected agent invoked?</td>
+                    <td>Score + "Expected: music, Got: ['general', 'music']"</td>
+                </tr>
+                <tr>
+                    <td><code>check_tool_selection</code></td>
+                    <td>Correct tool called?</td>
+                    <td>Score + "Expected: get_albums_by_artist, Got: ['get_tracks_by_artist']"</td>
+                </tr>
+                <tr>
+                    <td><code>check_tool_not_called</code></td>
+                    <td>Avoided wrong tool?</td>
+                    <td>Score + "Should NOT call: X, Tools called: [Y, Z]"</td>
+                </tr>
+                <tr>
+                    <td><code>check_parameter_extraction</code></td>
+                    <td>Correct params extracted?</td>
+                    <td>Score + "Expected: {artist: 'U2'}, Got: {artist: 'U2'}"</td>
+                </tr>
+                <tr>
+                    <td><code>check_response_contains</code></td>
+                    <td>Required content present?</td>
+                    <td>Score + "Missing: ['keyword1', 'keyword2']"</td>
+                </tr>
+                <tr>
+                    <td><code>check_response_not_contains</code></td>
+                    <td>Forbidden content absent?</td>
+                    <td>Score + "Found forbidden: ['SQL', 'ERROR']"</td>
+                </tr>
+                <tr>
+                    <td><code>check_data_handling</code></td>
+                    <td>Handles missing/existing data?</td>
+                    <td>Score + "Gracefully handled missing data"</td>
+                </tr>
+                <tr>
+                    <td><code>check_no_errors</code></td>
+                    <td>No execution errors?</td>
+                    <td>Score + "No errors" or "Errors detected"</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="component-box">
+        <h4>Component 4: Evaluation Harness (evals.ipynb - Cell 5)</h4>
+        <p><strong>Purpose:</strong> Orchestrate running all tests and aggregating results</p>
+        
+        <table style="margin-top: 15px;">
+            <thead>
+                <tr>
+                    <th style="width: 15%;">Step</th>
+                    <th style="width: 50%;">Process</th>
+                    <th style="width: 35%;">Function/Reference</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. Setup</strong></td>
+                    <td>Build graph with specified config (baseline or current)</td>
+                    <td><code>build_graph(CONFIGS[config_name])</code></td>
+                </tr>
+                <tr>
+                    <td><strong>2. Load Dataset</strong></td>
+                    <td>Fetch 55 test cases from LangSmith (or filter by category)</td>
+                    <td><code>client.list_examples(dataset_name)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>3. Execute Tests</strong></td>
+                    <td>For each test: invoke graph → create run object → evaluate with all applicable evaluators</td>
+                    <td><code>graph.invoke(messages)</code><br><code>evaluate_run(run, example)</code></td>
+                </tr>
+                <tr>
+                    <td><strong>4. Aggregate</strong></td>
+                    <td>Calculate pass rates by category, by metric, overall</td>
+                    <td><code>category_scores</code><br><code>metric_scores</code></td>
+                </tr>
+                <tr>
+                    <td><strong>5. Report</strong></td>
+                    <td>Display summary, failed tests, timing, and detailed failure analysis</td>
+                    <td>Results dictionary with<br>pass/fail breakdown</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>2. Rapid Iteration Testing Tools</h2>
+
+    <p>The framework provides 4 helper functions for fast testing and validation when making agent changes:</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 35%;">Function</th>
+                <th style="width: 65%;">Use Case</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>test_single_query(query, config)</code></td>
+                <td>Debug specific behavior, test individual edge cases</td>
+            </tr>
+            <tr>
+                <td><code>test_sample(n, config)</code></td>
+                <td>Run subset of tests to verify changes don't break core functionality</td>
+            </tr>
+            <tr>
+                <td><code>test_category(category, config)</code></td>
+                <td>Validate targeted improvements in specific areas</td>
+            </tr>
+            <tr>
+                <td><code>compare_configs(baseline, new)</code></td>
+                <td>Measure before/after impact of agent changes across all test categories</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Example: Iterating on Tool Selection</h3>
+
+    <div class="workflow-step">
+        <h4>Scenario: Agent calling get_tracks_by_artist when user asks for "albums" - need to add explicit distinction in MUSIC_PROMPT</h4>
+        
+        <p><strong>Iteration Steps:</strong></p>
+        <ul>
+            <li><strong>Step 1:</strong> Establish baseline performance
+                <div class="code-block">test_category("tool_selection", "baseline")
+# → Shows: 10/10 tests pass</div>
+            </li>
+            
+            <li><strong>Step 2:</strong> Make changes to MUSIC_PROMPT in agent_config.py
+                <div class="code-block"># Add explicit guidance: "If user asks for 'albums' or 'records', use get_albums_by_artist"</div>
+            </li>
+            
+            <li><strong>Step 3:</strong> Run subset of tests to verify no obvious failures
+                <div class="code-block">test_sample(5, "updated_prompt")
+# → No crashes, responses look reasonable</div>
+            </li>
+            
+            <li><strong>Step 4:</strong> Test the specific category affected by changes
+                <div class="code-block">test_category("tool_selection", "updated_prompt")
+# → Still 10/10, no regression in target area</div>
+            </li>
+            
+            <li><strong>Step 5:</strong> Full regression test across all categories
+                <div class="code-block">compare_configs("baseline", "updated_prompt")
+# → Overall: 94.5% → 96.4% (+1.9%)
+# → Tool Selection: 100% → 100% (maintained)
+# → Parameter Extraction: 80% → 100% (+20%, unexpected improvement!)</div>
+            </li>
+        </ul>
+    </div>
+
+    <h2>3. Current Baseline Results</h2>
+
+    <div class="overview-box">
+        <p><strong>Overall:</strong> 52/55 tests passed (94.5%)</p>
+        <p><strong>Execution Time:</strong> 115 seconds (~2 seconds per test)</p>
+        <p><strong>Failed Tests:</strong> 3</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Pass Rate</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Happy Path</td>
+                <td>12/12 (100.0%)</td>
+                <td>All basic functionality works</td>
+            </tr>
+            <tr>
+                <td>Tool Selection</td>
+                <td>10/10 (100.0%)</td>
+                <td>Albums vs songs disambiguation works</td>
+            </tr>
+            <tr>
+                <td>Edge Cases</td>
+                <td>5/5 (100.0%)</td>
+                <td>Handles unusual queries</td>
+            </tr>
+            <tr>
+                <td>Error Handling</td>
+                <td>4/4 (100.0%)</td>
+                <td>Gracefully handles out-of-scope</td>
+            </tr>
+            <tr>
+                <td>Multi Turn</td>
+                <td>5/5 (100.0%)</td>
+                <td>Maintains conversation context</td>
+            </tr>
+            <tr>
+                <td>Routing</td>
+                <td>7/8 (87.5%)</td>
+                <td>1 failure: B3.2 (return policy routing)</td>
+            </tr>
+            <tr>
+                <td>Data Handling</td>
+                <td>5/6 (83.3%)</td>
+                <td>1 failure: E3.1 (typo fuzzy matching)</td>
+            </tr>
+            <tr>
+                <td>Parameter Extraction</td>
+                <td>4/5 (80.0%)</td>
+                <td>1 failure: D2.1 (natural language ID extraction)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Failed Tests Detail</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 10%;">Test ID</th>
+                <th style="width: 20%;">Test Name / Type</th>
+                <th style="width: 20%;">Query</th>
+                <th style="width: 20%;">Expected</th>
+                <th style="width: 15%;">Actual</th>
+                <th style="width: 15%;">Fix</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>E3.1</td>
+                <td>Fuzzy Matching (Typo)</td>
+                <td>"Songs by Beetles"</td>
+                <td>Fuzzy match via SQL LIKE, return Beatles songs</td>
+                <td>No results found</td>
+                <td>Improve SQL query to use broader LIKE matching or add fuzzy matching logic</td>
+            </tr>
+            <tr>
+                <td>D2.1</td>
+                <td>Natural Language Parameter Extraction</td>
+                <td>"I'm customer number 42"</td>
+                <td>Extract customer_id: 42 from casual phrasing</td>
+                <td>Failed to extract parameter</td>
+                <td>Improve prompt to handle "customer number X" phrasing</td>
+            </tr>
+            <tr>
+                <td>B3.2</td>
+                <td>Out-of-Scope Routing</td>
+                <td>"How do I return a purchase?"</td>
+                <td>Route to general agent, explain limitations</td>
+                <td>Routed to customer agent (should stay in general)</td>
+                <td>Clarify in general prompt that return policies are out-of-scope</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>4. FAQ</h2>
+
+    <div class="design-decision">
+        <h4>1. How did you come up with these specific tests and categories?</h4>
+        <ul>
+            <li>Categories follow the <strong>testing pyramid</strong>: Foundation (Happy Path) → Core Decisions (Routing, Tool Selection) → Data Processing (Parameters, Data Handling) → Robustness (Edge Cases, Errors) → Advanced (Multi-Turn)</li>
+            <li>This enables systematic debugging - failures pinpoint exact component issues</li>
+        </ul>
+    </div>
+
+    <div class="design-decision">
+        <h4>2. Why the distribution? (Music 55%, Customer 36%, General 9%)</h4>
+        <ul>
+            <li>Mirrors complexity and predicted production usage</li>
+            <li>Music has 3 tools with more failure modes (albums vs songs, artist vs song name)</li>
+            <li>Customer has 1 tool but requires thorough error handling</li>
+            <li>General is simple routing</li>
+            <li>High-risk areas get proportional coverage</li>
+        </ul>
+    </div>
+
+    <div class="design-decision">
+        <h4>3. What's NOT being tested?</h4>
+        <ul>
+            <li>SQL correctness (hardcoded, not LLM-generated)</li>
+            <li>Response quality/naturalness</li>
+            <li>Performance/latency</li>
+            <li>Security (SQL/prompt injection)</li>
+            <li>Database reliability</li>
+            <li>Load testing</li>
+            <li>True multi-turn conversations (current tests only check missing parameter handling)</li>
+        </ul>
+    </div>
+
+    <div class="design-decision">
+        <h4>4. How do you evaluate these tests?</h4>
+        <p>8 automated evaluators inspect LangSmith traces:</p>
+        <ul>
+            <li>Routing (correct agent?)</li>
+            <li>Tool selection (correct tool?)</li>
+            <li>Tool avoidance (wrong tool NOT called?)</li>
+            <li>Parameter extraction (correct args?)</li>
+            <li>Response content (contains/avoids expected text?)</li>
+            <li>Data handling (proper formatting?)</li>
+            <li>Errors (none exposed?)</li>
+            <li>Each returns binary score with explanation</li>
+        </ul>
+    </div>
+
+    <div class="design-decision">
+        <h4>5. What do you make of the 94.5% baseline accuracy?</h4>
+        <ul>
+            <li>Excellent and realistic - production LLM systems typically achieve 90-95% on comprehensive tests</li>
+            <li>100% suggests under-testing</li>
+            <li>The 3 failures are high-signal issues: fuzzy matching for typos, natural language parameter extraction, out-of-scope routing</li>
+            <li>Goal is reliable measurement, not perfection</li>
+        </ul>
+    </div>
+
+    <div class="design-decision">
+        <h4>6. How would you improve the agent?</h4>
+        <p><strong>Immediate:</strong></p>
+        <ul>
+            <li>Fix 3 failures: fuzzy matching via Levenshtein distance, few-shot examples for "customer number X" format, explicit out-of-scope examples</li>
+        </ul>
+        <p><strong>Short-term:</strong></p>
+        <ul>
+            <li>Enhanced tool descriptions</li>
+            <li>Pydantic validation for tool inputs</li>
+        </ul>
+        <p><strong>Long-term:</strong></p>
+        <ul>
+            <li>Conversation memory for multi-turn</li>
+            <li>Graceful degradation when no results</li>
+            <li>Response templates for consistency</li>
+        </ul>
+    </div>
+
+</body>
+</html>
