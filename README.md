@@ -1,6 +1,6 @@
 # Zachary Xi - SQL Support Bot Eval Framework
 
-Hi Harrison and Sam, thanks for taking the time to review my take home.
+Hi Harrison and Sam, thanks for taking the time to review my take home!
 
 **Recommended Review Order:**
 1. Open `EVALUATION_FRAMEWORK.html` in browser -- overview of the evaluation framework
