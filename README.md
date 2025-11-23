@@ -2,7 +2,8 @@
 
 Hi Harrison and Sam, thanks for taking the time to review my take home!
 
-### Recommended Review Order:
+## Recommended Review Order:
+
 1. Open `EVALUATION_FRAMEWORK.html` in browser -- overview of the evaluation framework
 2. Open `TEST_SUMMARY.html` in browser -- deep dive into the test cases
 3. Review `evals.ipynb` (eval framework) and `agent_config.py` (rapid iteration config)
