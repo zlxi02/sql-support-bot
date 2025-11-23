@@ -1,12 +1,11 @@
 # Zachary Xi - SQL Support Bot Eval Framework
 
-Hi Harrison and Chase, thanks for taking the time to review my take home. Here's how I would recommend reviewing this:
+Hi Harrison and Sam, thanks for taking the time to review my take home.
 
-1. Open HTML file `EVALUATION_FRAMEWORK.html` in a browser tab -- this is a summary of the evaluation framework
-2. Open HTML file `TEST_SUMMARY.html` in a browser tab -- this is a deep dive for test cases
-3. Review the core agent / eval framework. Most notable files are:
-   - `evals.ipynb` - the eval framework
-   - `agent_config.py` - quickly make agent changes, created for rapid iteration
+**Recommended Review Order:**
+1. Open `EVALUATION_FRAMEWORK.html` in browser -- overview of the evaluation framework
+2. Open `TEST_SUMMARY.html` in browser -- deep dive into the test cases
+3. Review `evals.ipynb` (eval framework) and `agent_config.py` (rapid iteration config)
 
 ## File Structure
 
