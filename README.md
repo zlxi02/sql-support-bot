@@ -1,20 +1,12 @@
-# SQL Support Bot + Evaluation Framework
+# Zachary Xi - SQL Support Bot Eval Framework
 
-A multi-agent customer support bot that routes queries to specialized agents (Music, Customer, General) and interacts with a SQL database. Includes a comprehensive evaluation framework with 55 test cases across 8 categories.
+Hi Harrison and Chase, thanks for taking the time to review my take home. Here's how I would recommend reviewing this:
 
-## Setup
-
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-Add your API keys to `.env`:
-```
-OPENAI_API_KEY=your-key-here
-LANGCHAIN_API_KEY=your-key-here
-```
+1. Open HTML file `EVALUATION_FRAMEWORK.html` in a browser tab -- this is a summary of the evaluation framework
+2. Open HTML file `TEST_SUMMARY.html` in a browser tab -- this is a deep dive for test cases
+3. Review the core agent / eval framework. Most notable files are:
+   - `evals.ipynb` - the eval framework
+   - `agent_config.py` - quickly make agent changes, created for rapid iteration
 
 ## File Structure
 
@@ -30,11 +22,3 @@ LANGCHAIN_API_KEY=your-key-here
 ### Documentation
 - **`EVALUATION_FRAMEWORK.html`** - Complete framework documentation (architecture, components, workflow)
 - **`TEST_SUMMARY.html`** - Detailed test case breakdown with examples
-
-## Quick Start
-
-1. **Run the agent:** Open `agent.ipynb` and run cells to test the chatbot interactively
-2. **Run evaluations:** Open `evals.ipynb` to upload tests to LangSmith and run baseline evaluation
-3. **View results:** Check `EVALUATION_FRAMEWORK.html` for detailed documentation
-
-For full evaluation framework details, see `EVALUATION_FRAMEWORK.html`.
