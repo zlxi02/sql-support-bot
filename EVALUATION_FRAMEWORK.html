@@ -226,7 +226,7 @@
                 </tr>
                 <tr>
                     <td><strong>2. Evaluators</strong></td>
-                    <td>8 evaluator functions checking routing, tools, parameters, and error handling with detailed pass/fail comments (e.g. get_tool_calls_from_trace(run))</td>
+                    <td>7 evaluator functions checking routing, tools, parameters, and error handling with detailed pass/fail comments (e.g. get_tool_calls_from_trace(run))</td>
                 </tr>
                 <tr>
                     <td><strong>3. Evaluation Harness</strong></td>
@@ -397,11 +397,6 @@
                     <td><code>check_response_not_contains(run, example)</code></td>
                     <td>Forbidden content absent?</td>
                     <td>Score + "Found forbidden: ['SQL', 'ERROR']"</td>
-                </tr>
-                <tr>
-                    <td><code>check_data_handling(run, example)</code></td>
-                    <td>Handles missing/existing data?</td>
-                    <td>Score + "Gracefully handled missing data"</td>
                 </tr>
                 <tr>
                     <td><code>check_no_errors(run, example)</code></td>
@@ -720,21 +715,21 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>1. Router Prompt</strong></td>
-                    <td>General agent doesn't recognize intent patterns - queries like "Songs by Beetles" or "I'm customer 42" fail to route because prompt only says "if user asks about music" without defining what music queries look like. Additionally, prompt incorrectly routes "updating user information" to customer agent when it should stay in general (customer agent can only lookup, not update)</td>
+                    <td><strong>1. Router Prompt - Accuracy</strong></td>
+                    <td> Prompt incorrectly routes "updating user information" to customer agent when it should stay in general (customer agent can only lookup, not update). Also, General agent doesn't recognize intent patterns - queries like "Songs by Beetles" or "I'm customer 42" fail to route because prompt only says "if user asks about music" without defining what music queries look like.</td>
                     <td>Add explicit keyword patterns and examples: music keywords (artists, songs, albums, bands), customer keywords (ID, account, profile, email), with concrete routing examples. Clarify that customer agent is for lookups only, and update requests should be handled by general agent explaining the limitation</td>
                     <td>B (Routing), D (Parameters), E (Data Handling)</td>
                     <td>E3.1, D2.1</td>
                 </tr>
                 <tr>
-                    <td><strong>2. Music Tool Selection</strong></td>
+                    <td><strong>2. Music Prompt -  Tool Selection</strong></td>
                     <td>Music agent confuses similar tools - doesn't clearly distinguish between albums vs songs, or artist lookup vs song title lookup. Lacks guidance on efficiency (calling one tool vs multiple)</td>
                     <td>Add numbered decision tree with clear keywords and decision logic: (1) albums/records → get_albums_by_artist, (2) songs/tracks by artist → get_tracks_by_artist, (3) "do you have [title]" → check_for_songs. Include efficiency rule: only call ONE tool unless explicitly asked for multiple</td>
                     <td>C (Tool Selection )</td>
                     <td>N/A (current config already improved baseline)</td>
                 </tr>
                 <tr>
-                    <td><strong>3. Customer Info Gathering</strong></td>
+                    <td><strong>3. Customer Prompt -Info Gathering</strong></td>
                     <td>Customer prompt is incomplete (ends mid-sentence: "you can "). Doesn't guide agent on handling missing customer ID or when to ask follow-up questions - critical for multi-turn conversations</td>
                     <td>Complete the prompt with clear 4-step workflow: (1) if ID provided → extract and call tool, (2) if ID missing → ask politely for it, (3) if update request → explain limitations, (4) if out of scope → redirect to general</td>
                     <td>D (Parameters), G (Error Handling), H (Multi-Turn)</td>

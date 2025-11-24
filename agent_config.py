@@ -78,7 +78,7 @@ You only have certain tools you can use. These tools require specific input. If 
 
 If you are unable to help the user, you can """
 
-CURRENT_MUSIC_PROMPT = """Your job is to help a customer find any songs they are looking for. 
+CURRENT_MUSIC_PROMPT = """Your job is to help a customer find any songs or albums they are looking for given an artist name, album name, or song name.
 
 You only have certain tools you can use. If a customer asks you to look something up that you don't know how, politely tell them what you can help with.
 
@@ -153,30 +153,14 @@ def create_tools(db):
             """,
             include_columns=True
         )
-    
-    @tool
-    def get_customer_invoice_summary(customer_id: int):
-        """Get customer's country and total number of invoices. Use this when customer asks about their purchase history or invoice count."""
-        return db.run(
-            f"""
-            SELECT 
-                Customer.Country,
-                Customer.FirstName || ' ' || Customer.LastName as CustomerName,
-                COUNT(Invoice.InvoiceId) as TotalInvoices
-            FROM Customer
-            LEFT JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId
-            WHERE Customer.CustomerId = {customer_id}
-            GROUP BY Customer.CustomerId, Customer.Country, Customer.FirstName, Customer.LastName;
-            """,
-            include_columns=True
-        )
 
+            
     return {
         "get_customer_info": get_customer_info,
         "get_albums_by_artist": get_albums_by_artist,
         "get_tracks_by_artist": get_tracks_by_artist,
         "check_for_songs": check_for_songs,
-        "get_customer_invoice_summary": get_customer_invoice_summary,
+
     }
 
 
