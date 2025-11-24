@@ -209,9 +209,9 @@
         <h2>Executive Summary</h2>
         
         <h3 style="margin-top: 15px;">Goal</h3>
-        <p>Test SQL support bot capabilities (routing, tool calling, parameter extraction, error handling) and enable rapid iteration with automated performance measurement.</p>
+        <p>Develop an evaluation framework for the SQL support bot to test its core capabilities and enable rapid agent iteration.</p>
         
-        <h3 style="margin-top: 25px;">System Architecture</h3>
+        <h3 style="margin-top: 25px;">Core Components Overview</h3>
         <table style="margin-top: 10px;">
             <thead>
                 <tr>
@@ -221,61 +221,56 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><strong>Test Dataset</strong></td>
+                    <td><strong>1. Test Dataset</strong></td>
                     <td>55 comprehensive tests across 8 categories (happy path, routing, tool selection, parameters, data handling, edge cases, errors, multi-turn)</td>
                 </tr>
                 <tr>
-                    <td><strong>Evaluators</strong></td>
-                    <td>8 automated evaluators checking routing, tools, parameters, and response quality with detailed pass/fail comments</td>
+                    <td><strong>2. Evaluators</strong></td>
+                    <td>8 evaluator functions checking routing, tools, parameters, and error handling with detailed pass/fail comments (e.g. get_tool_calls_from_trace(run))</td>
                 </tr>
                 <tr>
-                    <td><strong>Evaluation Harness</strong></td>
-                    <td>Orchestration layer that runs tests, applies evaluators, aggregates results, and generates reports</td>
+                    <td><strong>3. Evaluation Harness</strong></td>
+                    <td>Automated evaluation pipeline that runs tests, measures performance, and identifies failures  (e.g., compare_configs('baseline', 'current'))  </td>
                 </tr>
                 <tr>
-                    <td><strong>Targeted Testing</strong></td>
-                    <td>4 functions for rapid testing (single query, sample, category, full comparison)</td>
+                    <td><strong>4. Targeted Testing</strong></td>
+                    <td>5 functions for rapid testing - single query, sample, category, full comparison, one-off validation (e.g. test_category("tool_selection", "baseline"))</td>
                 </tr>
                 <tr>
-                    <td><strong>Agent Configuration</strong></td>
-                    <td>Centralized prompts and tool definitions with baseline vs current configs for A/B testing</td>
-                </tr>
-                <tr>
-                    <td><strong>LangSmith Integration</strong></td>
-                    <td>Automatic tracing, dataset management, and evaluation tracking</td>
+                    <td><strong>5. Agent Configuration</strong></td>
+                    <td>Centralized prompt and tool definitions with baseline vs current configs for A/B testing</td>
                 </tr>
             </tbody>
         </table>
         
-        <h3 style="margin-top: 25px;">Agent Performance (Initial Run)</h3>
-        <p><strong>Baseline:</strong> 94.5% pass rate (52/55 tests)</p>
-        <p><strong>Failures:</strong> 3 tests (fuzzy matching for typos, natural language parameter extraction, out-of-scope routing)</p>
     </div>
 
     <h2>1. Core Components</h2>
 
     <div class="component-box">
         <h4>Component 1: Test Dataset (tests.py)</h4>
-        <p><strong>Purpose:</strong> Comprehensive test coverage across all agent capabilities</p>
-        <p><strong>Structure:</strong> Each test includes inputs (query) and expected outputs (agent, tool, params, content)</p>
+        <p><strong>Summary:</strong> Test coverage across all agent capabilities. Each test includes inputs (query) and expected outputs (agent, tool, params, content).</p>
         
         <table>
             <thead>
                 <tr>
-                    <th>Category</th>
-                    <th>Tests</th>
-                    <th>Coverage</th>
-                    <th>Focus</th>
+                    <th style="width: 20%;">Core Function</th>
+                    <th style="width: 20%;">Category</th>
+                    <th style="width: 10%;">Tests</th>
+                    <th style="width: 10%;">Coverage</th>
+                    <th style="width: 40%;">Focus</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
+                    <td><strong>Basic Functionality</strong></td>
                     <td><strong>A. Happy Path</strong></td>
                     <td>12</td>
                     <td>22%</td>
                     <td>Basic functionality: songs, albums, customer lookups</td>
                 </tr>
                 <tr>
+                    <td rowspan="2"><strong>Core Decision-Making</strong></td>
                     <td><strong>B. Routing</strong></td>
                     <td>8</td>
                     <td>15%</td>
@@ -288,6 +283,7 @@
                     <td>Albums vs songs, artist vs song name disambiguation</td>
                 </tr>
                 <tr>
+                    <td rowspan="2"><strong>Data Processing</strong></td>
                     <td><strong>D. Parameter Extraction</strong></td>
                     <td>5</td>
                     <td>9%</td>
@@ -300,6 +296,7 @@
                     <td>Existing data, missing data, fuzzy matching (typos)</td>
                 </tr>
                 <tr>
+                    <td rowspan="2"><strong>Robustness</strong></td>
                     <td><strong>F. Edge Cases</strong></td>
                     <td>5</td>
                     <td>9%</td>
@@ -312,6 +309,7 @@
                     <td>Out-of-scope queries, capability limits</td>
                 </tr>
                 <tr>
+                    <td><strong>Advanced Features</strong></td>
                     <td><strong>H. Multi-Turn</strong></td>
                     <td>5</td>
                     <td>9%</td>
@@ -371,42 +369,42 @@
             </thead>
             <tbody>
                 <tr>
-                    <td><code>check_routing</code></td>
+                    <td><code>check_routing(run, example)</code></td>
                     <td>Expected agent invoked?</td>
                     <td>Score + "Expected: music, Got: ['general', 'music']"</td>
                 </tr>
                 <tr>
-                    <td><code>check_tool_selection</code></td>
+                    <td><code>check_tool_selection(run, example)</code></td>
                     <td>Correct tool called?</td>
                     <td>Score + "Expected: get_albums_by_artist, Got: ['get_tracks_by_artist']"</td>
                 </tr>
                 <tr>
-                    <td><code>check_tool_not_called</code></td>
+                    <td><code>check_tool_not_called(run, example)</code></td>
                     <td>Avoided wrong tool?</td>
                     <td>Score + "Should NOT call: X, Tools called: [Y, Z]"</td>
                 </tr>
                 <tr>
-                    <td><code>check_parameter_extraction</code></td>
+                    <td><code>check_parameter_extraction(run, example)</code></td>
                     <td>Correct params extracted?</td>
                     <td>Score + "Expected: {artist: 'U2'}, Got: {artist: 'U2'}"</td>
                 </tr>
                 <tr>
-                    <td><code>check_response_contains</code></td>
+                    <td><code>check_response_contains(run, example)</code></td>
                     <td>Required content present?</td>
                     <td>Score + "Missing: ['keyword1', 'keyword2']"</td>
                 </tr>
                 <tr>
-                    <td><code>check_response_not_contains</code></td>
+                    <td><code>check_response_not_contains(run, example)</code></td>
                     <td>Forbidden content absent?</td>
                     <td>Score + "Found forbidden: ['SQL', 'ERROR']"</td>
                 </tr>
                 <tr>
-                    <td><code>check_data_handling</code></td>
+                    <td><code>check_data_handling(run, example)</code></td>
                     <td>Handles missing/existing data?</td>
                     <td>Score + "Gracefully handled missing data"</td>
                 </tr>
                 <tr>
-                    <td><code>check_no_errors</code></td>
+                    <td><code>check_no_errors(run, example)</code></td>
                     <td>No execution errors?</td>
                     <td>Score + "No errors" or "Errors detected"</td>
                 </tr>
@@ -475,7 +473,7 @@
                 </tr>
                 <tr>
                     <td><code>test_sample(n, config)</code></td>
-                    <td>Run subset of tests to verify changes don't break core functionality</td>
+                    <td>Stratified sample to verify changes don't break core functionality</td>
                 </tr>
                 <tr>
                     <td><code>test_category(category, config)</code></td>
@@ -484,6 +482,10 @@
                 <tr>
                     <td><code>compare_configs(baseline, new)</code></td>
                     <td>Measure before/after impact of agent changes across all test categories</td>
+                </tr>
+                <tr>
+                    <td><code>validate_query(query, expected_agent, expected_tool, ...)</code></td>
+                    <td>Quick one-off test validation without saving to dataset</td>
                 </tr>
             </tbody>
         </table>
@@ -531,27 +533,27 @@
     <h2>2. Example: Rapid Iteration Workflow</h2>
 
     <div class="workflow-step">
-        <h4>Scenario: Improving Tool Selection - Agent calling get_tracks_by_artist when user asks for "albums"</h4>
+        <h4>Scenario: We want to improve the music agent prompt to explicitly invoke get_albums_by_artist when user asks for "albums"</h4>
         
         <p><strong>Iteration Steps:</strong></p>
         <ul>
             <li><strong>Step 1:</strong> Establish baseline performance
                 <div class="code-block">test_category("tool_selection", "baseline")
-# → Shows: 10/10 tests pass</div>
+# → Shows: 9/10 tests pass</div>
             </li>
             
             <li><strong>Step 2:</strong> Make changes to MUSIC_PROMPT in agent_config.py
-                <div class="code-block"># Add explicit guidance: "If user asks for 'albums' or 'records', use get_albums_by_artist"</div>
+                <div class="code-block"># Add explicit guidance: "If user asks for 'albums', use get_albums_by_artist"</div>
             </li>
             
-            <li><strong>Step 3:</strong> Run subset of tests to verify no obvious failures
-                <div class="code-block">test_sample(5, "updated_prompt")
+            <li><strong>Step 3:</strong> Run stratified sample of tests to verify no obvious failures
+                <div class="code-block">test_sample(8, "updated_prompt")
 # → No crashes, responses look reasonable</div>
             </li>
             
             <li><strong>Step 4:</strong> Test the specific category affected by changes
                 <div class="code-block">test_category("tool_selection", "updated_prompt")
-# → Still 10/10, no regression in target area</div>
+# → 10/10! improvement in target area</div>
             </li>
             
             <li><strong>Step 5:</strong> Full regression test across all categories
@@ -719,8 +721,8 @@
             <tbody>
                 <tr>
                     <td><strong>1. Router Prompt</strong></td>
-                    <td>General agent doesn't recognize intent patterns - queries like "Songs by Beetles" or "I'm customer 42" fail to route because prompt only says "if user asks about music" without defining what music queries look like</td>
-                    <td>Add explicit keyword patterns and examples: music keywords (artists, songs, albums, bands), customer keywords (ID, account, profile, email), with concrete routing examples</td>
+                    <td>General agent doesn't recognize intent patterns - queries like "Songs by Beetles" or "I'm customer 42" fail to route because prompt only says "if user asks about music" without defining what music queries look like. Additionally, prompt incorrectly routes "updating user information" to customer agent when it should stay in general (customer agent can only lookup, not update)</td>
+                    <td>Add explicit keyword patterns and examples: music keywords (artists, songs, albums, bands), customer keywords (ID, account, profile, email), with concrete routing examples. Clarify that customer agent is for lookups only, and update requests should be handled by general agent explaining the limitation</td>
                     <td>B (Routing), D (Parameters), E (Data Handling)</td>
                     <td>E3.1, D2.1</td>
                 </tr>
@@ -728,12 +730,12 @@
                     <td><strong>2. Music Tool Selection</strong></td>
                     <td>Music agent confuses similar tools - doesn't clearly distinguish between albums vs songs, or artist lookup vs song title lookup. Lacks guidance on efficiency (calling one tool vs multiple)</td>
                     <td>Add numbered decision tree with clear keywords and decision logic: (1) albums/records → get_albums_by_artist, (2) songs/tracks by artist → get_tracks_by_artist, (3) "do you have [title]" → check_for_songs. Include efficiency rule: only call ONE tool unless explicitly asked for multiple</td>
-                    <td>C (Tool Selection - MOST CRITICAL)</td>
+                    <td>C (Tool Selection )</td>
                     <td>N/A (current config already improved baseline)</td>
                 </tr>
                 <tr>
                     <td><strong>3. Customer Info Gathering</strong></td>
-                    <td>Customer prompt is incomplete (literally ends mid-sentence: "you can "). Doesn't guide agent on handling missing customer ID or when to ask follow-up questions - critical for multi-turn conversations</td>
+                    <td>Customer prompt is incomplete (ends mid-sentence: "you can "). Doesn't guide agent on handling missing customer ID or when to ask follow-up questions - critical for multi-turn conversations</td>
                     <td>Complete the prompt with clear 4-step workflow: (1) if ID provided → extract and call tool, (2) if ID missing → ask politely for it, (3) if update request → explain limitations, (4) if out of scope → redirect to general</td>
                     <td>D (Parameters), G (Error Handling), H (Multi-Turn)</td>
                     <td>N/A (would prevent future failures in multi-turn scenarios)</td>

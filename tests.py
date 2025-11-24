@@ -658,7 +658,7 @@ edge_case_tests = [
         }
     },
     {
-        "inputs": {"messages": [HumanMessage(content="i'm customer 7 what's my info")]},
+        "inputs": {"messages": [HumanMessage(content="im customer 7 what's my info")]},
         "outputs": {
             "test_id": "F4.1",
             "category": "edge_cases",

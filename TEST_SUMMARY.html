@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Suite - SQL Support Bot</title>
+    <title>Test Summary - SQL Support Bot</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -256,8 +256,8 @@
 </head>
 <body>
     <div class="document-header">
-        <h1>Test Suite - SQL Support Bot</h1>
-        <p class="document-subtitle">Zachary Xi - LangChain Takehome Test Suite</p>
+        <h1>Test Summary - SQL Support Bot</h1>
+        <p class="document-subtitle">Zachary Xi - LangChain Takehome Test <Summary></Summary></p>
     </div>
 
     <div class="section-intro">
@@ -278,7 +278,7 @@
             </thead>
             <tbody>
                 <tr class="group-basic">
-                    <td><strong>Basic Functionality First</strong><br>(Category A)</td>
+                    <td><strong>Basic Functionality </strong><br>(Category A)</td>
                     <td>Verify core features work correctly</td>
                     <td>Send straightforward queries across all agents</td>
                     <td>Agent routing, tool selection, parameter extraction, valid responses</td>
@@ -359,7 +359,7 @@
                 </td>
             </tr>
             <tr class="category-c">
-                <td class="category-label">C. Tool Selection*</td>
+                <td class="category-label">C. Tool Selection</td>
                 <td>10</td>
                 <td>Correct tool called for each query type</td>
                 <td>
@@ -469,8 +469,8 @@
                     <th style="width: 8%;">Test ID</th>
                     <th style="width: 15%;">Subcategory</th>
                     <th style="width: 35%;">Question</th>
-                    <th style="width: 12%;">Agent</th>
-                    <th style="width: 20%;">Expected Tool</th>
+                    <th style="width: 12%;">Expected Agent</th>
+                    <th style="width: 20%;">Expected Output</th>
                     <th style="width: 10%;">Type</th>
                 </tr>
             </thead>
@@ -587,7 +587,7 @@
                 <th style="width: 18%;">Subcategory</th>
                 <th style="width: 40%;">Question</th>
                 <th style="width: 14%;">Expected Agent</th>
-                <th style="width: 20%;">Key Signal</th>
+                <th style="width: 20%;">Expected Output</th>
             </tr>
         </thead>
         <tbody>
@@ -660,10 +660,11 @@
             <thead>
                 <tr>
                     <th style="width: 8%;">Test ID</th>
-                    <th style="width: 18%;">Subcategory</th>
-                    <th style="width: 35%;">Question</th>
-                    <th style="width: 20%;">Expected Tool</th>
-                    <th style="width: 19%;">Critical Distinction</th>
+                    <th style="width: 16%;">Subcategory</th>
+                    <th style="width: 32%;">Question</th>
+                    <th style="width: 12%;">Expected Agent</th>
+                    <th style="width: 18%;">Expected Tool</th>
+                    <th style="width: 14%;">Expected Output</th>
                 </tr>
             </thead>
             <tbody>
@@ -671,6 +672,7 @@
                     <td>C1.1</td>
                     <td>Albums vs Songs</td>
                     <td class="test-question">"What <strong>albums</strong> does U2 have?"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>get_albums_by_artist</code></td>
                     <td>'albums' keyword</td>
                 </tr>
@@ -678,6 +680,7 @@
                     <td>C1.2</td>
                     <td>Albums vs Songs</td>
                     <td class="test-question">"What <strong>songs</strong> does U2 have?"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>get_tracks_by_artist</code></td>
                     <td>'songs' keyword</td>
                 </tr>
@@ -685,6 +688,7 @@
                     <td>C1.3</td>
                     <td>Albums vs Songs</td>
                     <td class="test-question">"Show me <strong>tracks</strong> by Iron Maiden"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>get_tracks_by_artist</code></td>
                     <td>'tracks' = songs</td>
                 </tr>
@@ -692,6 +696,7 @@
                     <td>C1.4</td>
                     <td>Albums vs Songs</td>
                     <td class="test-question">"What <strong>records</strong> does Pink Floyd have?"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>get_albums_by_artist</code></td>
                     <td>'records' = albums</td>
                 </tr>
@@ -699,6 +704,7 @@
                     <td>C2.1</td>
                     <td>Artist vs Song Name</td>
                     <td class="test-question">"Find music <strong>by Metallica</strong>"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>get_tracks_by_artist</code></td>
                     <td>Search BY artist</td>
                 </tr>
@@ -706,6 +712,7 @@
                     <td>C2.2</td>
                     <td>Artist vs Song Name</td>
                     <td class="test-question">"Do you have '<strong>Bohemian Rhapsody</strong>'?"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>check_for_songs</code></td>
                     <td>Search FOR song name</td>
                 </tr>
@@ -713,6 +720,7 @@
                     <td>C2.3</td>
                     <td>Artist vs Song Name</td>
                     <td class="test-question">"Find the song '<strong>Beautiful Day</strong>'"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>check_for_songs</code></td>
                     <td>Song title with quotes</td>
                 </tr>
@@ -720,6 +728,7 @@
                     <td>C3.1</td>
                     <td>Tool Efficiency</td>
                     <td class="test-question">"Do you have 'One' by U2?"</td>
+                    <td><span class="badge badge-music">music</span></td>
                     <td><code>check_for_songs</code></td>
                     <td>No unnecessary tools</td>
                 </tr>
@@ -727,6 +736,7 @@
                     <td>C4.1</td>
                     <td>Customer Tool</td>
                     <td class="test-question">"Look up customer 20"</td>
+                    <td><span class="badge badge-customer">customer</span></td>
                     <td><code>get_customer_info</code></td>
                     <td>customer_id=20</td>
                 </tr>
@@ -734,6 +744,7 @@
                     <td>C4.2</td>
                     <td>Customer Tool</td>
                     <td class="test-question">"Get info for customer 25"</td>
+                    <td><span class="badge badge-customer">customer</span></td>
                     <td><code>get_customer_info</code></td>
                     <td>customer_id=25</td>
                 </tr>
@@ -750,10 +761,11 @@
         <thead>
             <tr>
                 <th style="width: 8%;">Test ID</th>
-                <th style="width: 20%;">Subcategory</th>
-                <th style="width: 35%;">Question</th>
-                <th style="width: 22%;">Expected Parameter</th>
-                <th style="width: 15%;">Challenge</th>
+                <th style="width: 18%;">Subcategory</th>
+                <th style="width: 32%;">Question</th>
+                <th style="width: 12%;">Expected Agent</th>
+                <th style="width: 18%;">Expected Parameter</th>
+                <th style="width: 12%;">Expected Output</th>
             </tr>
         </thead>
         <tbody>
@@ -761,6 +773,7 @@
                 <td>D1.1</td>
                 <td>Artist Extraction</td>
                 <td class="test-question">"Songs by Madonna"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>artist="Madonna"</td>
                 <td>Simple name</td>
             </tr>
@@ -768,6 +781,7 @@
                 <td>D1.2</td>
                 <td>Artist Extraction</td>
                 <td class="test-question">"Albums by Iron Maiden"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>artist="Iron Maiden"</td>
                 <td>Multi-word name</td>
             </tr>
@@ -775,6 +789,7 @@
                 <td>D1.3</td>
                 <td>Artist Extraction</td>
                 <td class="test-question">"Music by AC/DC"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>artist="AC/DC"</td>
                 <td>Special characters (/)</td>
             </tr>
@@ -782,6 +797,7 @@
                 <td>D2.1</td>
                 <td>Customer ID Extraction</td>
                 <td class="test-question">"I'm customer number 42"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>customer_id=42</td>
                 <td>Natural language</td>
             </tr>
@@ -789,6 +805,7 @@
                 <td>D2.2</td>
                 <td>Customer ID Extraction</td>
                 <td class="test-question">"Customer ID: 30"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>customer_id=30</td>
                 <td>Colon format</td>
             </tr>
@@ -805,9 +822,10 @@
         <thead>
             <tr>
                 <th style="width: 8%;">Test ID</th>
-                <th style="width: 20%;">Subcategory</th>
-                <th style="width: 37%;">Question</th>
-                <th style="width: 35%;">Expected Behavior</th>
+                <th style="width: 18%;">Subcategory</th>
+                <th style="width: 34%;">Question</th>
+                <th style="width: 12%;">Expected Agent</th>
+                <th style="width: 28%;">Expected Output</th>
             </tr>
         </thead>
         <tbody>
@@ -815,36 +833,42 @@
                 <td>E1.1</td>
                 <td>Existing Data</td>
                 <td class="test-question">"Songs by U2"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Should return many results</td>
             </tr>
             <tr>
                 <td>E1.2</td>
                 <td>Existing Data</td>
                 <td class="test-question">"Customer 5 information"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Should return customer info</td>
             </tr>
             <tr>
                 <td>E2.1</td>
                 <td>Nonexistent Data</td>
                 <td class="test-question">"Songs by Taylor Swift"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Graceful failure message</td>
             </tr>
             <tr>
                 <td>E2.2</td>
                 <td>Nonexistent Data</td>
                 <td class="test-question">"Look up customer 99999"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Graceful failure message</td>
             </tr>
             <tr>
                 <td>E3.1</td>
                 <td>Fuzzy Matching</td>
                 <td class="test-question">"Songs by Beetles"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Match "The Beatles" via LIKE</td>
             </tr>
             <tr>
                 <td>E3.2</td>
                 <td>Edge Data</td>
                 <td class="test-question">"Customer 59 information"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Last valid customer ID</td>
             </tr>
         </tbody>
@@ -860,9 +884,10 @@
         <thead>
             <tr>
                 <th style="width: 8%;">Test ID</th>
-                <th style="width: 20%;">Subcategory</th>
-                <th style="width: 50%;">Question</th>
-                <th style="width: 22%;">Challenge</th>
+                <th style="width: 18%;">Subcategory</th>
+                <th style="width: 44%;">Question</th>
+                <th style="width: 12%;">Expected Agent</th>
+                <th style="width: 18%;">Expected Output</th>
             </tr>
         </thead>
         <tbody>
@@ -870,30 +895,35 @@
                 <td>F1.1</td>
                 <td>Verbose Input</td>
                 <td class="test-question">"Hi I'm looking for music and I was wondering if you could help me find songs by U2"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Extract from verbose query</td>
             </tr>
             <tr>
                 <td>F2.1</td>
                 <td>Case Handling</td>
                 <td class="test-question">"SONGS BY U2"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>All caps input</td>
             </tr>
             <tr>
                 <td>F2.2</td>
                 <td>Case Handling</td>
                 <td class="test-question">"CUSTOMER 10 EMAIL"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>All caps customer query</td>
             </tr>
             <tr>
                 <td>F2.3</td>
                 <td>Case Handling</td>
-                <td class="test-question">"i'm customer 7 what's my info"</td>
+                <td class="test-question">"im customer 7 what's my info"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>All lowercase, no punctuation</td>
             </tr>
             <tr>
                 <td>F3.1</td>
                 <td>Gibberish</td>
                 <td class="test-question">"asdfghjkl"</td>
+                <td><span class="badge badge-general">general</span></td>
                 <td>Should not crash</td>
             </tr>
         </tbody>
@@ -909,9 +939,10 @@
         <thead>
             <tr>
                 <th style="width: 8%;">Test ID</th>
-                <th style="width: 22%;">Subcategory</th>
-                <th style="width: 45%;">Question</th>
-                <th style="width: 25%;">Expected Behavior</th>
+                <th style="width: 20%;">Subcategory</th>
+                <th style="width: 40%;">Question</th>
+                <th style="width: 12%;">Expected Agent</th>
+                <th style="width: 20%;">Expected Behavior</th>
             </tr>
         </thead>
         <tbody>
@@ -919,24 +950,28 @@
                 <td>G1.1</td>
                 <td>Out of Capability</td>
                 <td class="test-question">"Delete all songs by U2"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Explain cannot delete</td>
             </tr>
             <tr>
                 <td>G2.1</td>
                 <td>Capability Boundary</td>
                 <td class="test-question">"Update my email to newemail@example.com"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Explain lookup-only capability</td>
             </tr>
             <tr>
                 <td>G2.2</td>
                 <td>Capability Boundary</td>
                 <td class="test-question">"Delete my account"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Explain cannot delete</td>
             </tr>
             <tr>
                 <td>G2.3</td>
                 <td>Invalid Input</td>
                 <td class="test-question">"Look up customer -5"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Handle negative ID gracefully</td>
             </tr>
         </tbody>
@@ -952,9 +987,10 @@
         <thead>
             <tr>
                 <th style="width: 8%;">Test ID</th>
-                <th style="width: 22%;">Subcategory</th>
-                <th style="width: 45%;">Question</th>
-                <th style="width: 25%;">Expected Behavior</th>
+                <th style="width: 20%;">Subcategory</th>
+                <th style="width: 40%;">Question</th>
+                <th style="width: 12%;">Expected Agent</th>
+                <th style="width: 20%;">Expected Behavior</th>
             </tr>
         </thead>
         <tbody>
@@ -962,30 +998,35 @@
                 <td>H1.1</td>
                 <td>Music Conversation</td>
                 <td class="test-question">"I'm looking for music"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Should ask which artist</td>
             </tr>
             <tr>
                 <td>H1.2</td>
                 <td>Music Conversation</td>
                 <td class="test-question">"What albums does U2 have?"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Setup for follow-up test</td>
             </tr>
             <tr>
                 <td>H1.3</td>
                 <td>Music Multi-Request</td>
                 <td class="test-question">"Show me both albums and songs by Aerosmith"</td>
+                <td><span class="badge badge-music">music</span></td>
                 <td>Call multiple tools</td>
             </tr>
             <tr>
                 <td>H2.1</td>
                 <td>Customer Conversation</td>
                 <td class="test-question">"What's my email?"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Should ask for customer ID</td>
             </tr>
             <tr>
                 <td>H2.2</td>
                 <td>Customer Conversation</td>
                 <td class="test-question">"I need help with my account"</td>
+                <td><span class="badge badge-customer">customer</span></td>
                 <td>Should ask for ID</td>
             </tr>
         </tbody>

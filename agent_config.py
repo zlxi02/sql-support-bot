@@ -78,14 +78,12 @@ You only have certain tools you can use. These tools require specific input. If 
 
 If you are unable to help the user, you can """
 
-CURRENT_MUSIC_PROMPT = """Your job is to help a customer find any songs they are looking for.
+CURRENT_MUSIC_PROMPT = """Your job is to help a customer find any songs they are looking for. 
 
-TOOL SELECTION GUIDE:
-- If user asks for 'albums' or 'records' → use get_albums_by_artist
-- If user asks for 'songs', 'tracks', or 'music' → use get_tracks_by_artist
-- If user asks 'do you have [song name]' → use check_for_songs
+You only have certain tools you can use. If a customer asks you to look something up that you don't know how, politely tell them what you can help with.
 
-When looking up artists and songs, sometimes the artist/song will not be found. In that case, the tools will return information on similar songs and artists. This is intentional, it is not the tool messing up."""
+When looking up artists and songs, sometimes the artist/song will not be found. In that case, the tools will return information on simliar songs and artists. This is intentional, it is not the tool messing up."""
+
 
 CURRENT_GENERAL_PROMPT = """Your job is to help as a customer service representative for a music store.
 
@@ -100,86 +98,25 @@ Otherwise, respond."""
 
 
 # ============================================================================
-# CONFIGURATIONS
+# TOOL FACTORY
 # ============================================================================
 
-CONFIGS = {
-    "baseline": {
-        "general_prompt": GENERAL_PROMPT,
-        "music_prompt": MUSIC_PROMPT,
-        "customer_prompt": CUSTOMER_PROMPT,
-        "model_name": "gpt-4o",
-        "temperature": 0,
-        "streaming": False,  # False for faster evals
-    },
-    "current": {
-        # Uses CURRENT_* prompts which you can modify during interview
-        "general_prompt": CURRENT_GENERAL_PROMPT,
-        "music_prompt": CURRENT_MUSIC_PROMPT,
-        "customer_prompt": CURRENT_CUSTOMER_PROMPT,
-        "model_name": "gpt-4o",
-        "temperature": 0,
-        "streaming": False,
-    }
-}
-
-
-# ============================================================================
-# GRAPH BUILDER
-# ============================================================================
-
-def build_graph(config):
+def create_tools(db):
     """
-    Build the complete multi-agent graph with specified configuration.
+    Create all available tools with database access.
     
     Args:
-        config: Dictionary with keys:
-            - general_prompt: str (router agent prompt)
-            - music_prompt: str (music agent prompt)
-            - customer_prompt: str (customer agent prompt)
-            - model_name: str (e.g., "gpt-4o", "gpt-3.5-turbo")
-            - temperature: float (0-1, for response randomness)
-            - streaming: bool (whether to stream responses)
-    
+        db: SQLDatabase instance
+        
     Returns:
-        Compiled LangGraph workflow
+        Dictionary mapping tool names to tool functions
     """
     
-    # ========================================================================
-    # SETUP: Extract Config & Initialize Core Components
-    # ========================================================================
-    
-    # Extract config parameters
-    general_prompt = config["general_prompt"]
-    music_prompt = config["music_prompt"]
-    customer_prompt = config["customer_prompt"]
-    model_name = config["model_name"]
-    temperature = config["temperature"]
-    streaming = config.get("streaming", False)
-    
-    # Setup database (from notebook Cell 5)
-    engine = get_engine_for_chinook_db()
-    db = SQLDatabase(engine)
-    
-    # Create LLM model (from notebook Cell 8)
-    model = ChatOpenAI(
-        temperature=temperature,
-        streaming=streaming,
-        model=model_name
-    )
-    
-    # ========================================================================
-    # TOOLS: Define all tools for agents (from notebook Cells 12, 16, 18, 20)
-    # ========================================================================
-    # NOTE: Tools must be inside function to access 'db'
-    # Modify tool docstrings or SQL queries here during interview
-    # --- Customer Tool (Cell 12) ---
     @tool
     def get_customer_info(customer_id: int):
         """Look up customer info given their ID. ALWAYS make sure you have the customer ID before invoking this."""
         return db.run(f"SELECT * FROM Customer WHERE CustomerID = {customer_id};")
     
-    # --- Music Tools (Cells 16, 18, 20) ---
     @tool
     def get_albums_by_artist(artist: str):
         """Get albums by an artist."""
@@ -217,6 +154,126 @@ def build_graph(config):
             include_columns=True
         )
     
+    @tool
+    def get_customer_invoice_summary(customer_id: int):
+        """Get customer's country and total number of invoices. Use this when customer asks about their purchase history or invoice count."""
+        return db.run(
+            f"""
+            SELECT 
+                Customer.Country,
+                Customer.FirstName || ' ' || Customer.LastName as CustomerName,
+                COUNT(Invoice.InvoiceId) as TotalInvoices
+            FROM Customer
+            LEFT JOIN Invoice ON Customer.CustomerId = Invoice.CustomerId
+            WHERE Customer.CustomerId = {customer_id}
+            GROUP BY Customer.CustomerId, Customer.Country, Customer.FirstName, Customer.LastName;
+            """,
+            include_columns=True
+        )
+
+    return {
+        "get_customer_info": get_customer_info,
+        "get_albums_by_artist": get_albums_by_artist,
+        "get_tracks_by_artist": get_tracks_by_artist,
+        "check_for_songs": check_for_songs,
+        "get_customer_invoice_summary": get_customer_invoice_summary,
+    }
+
+
+# ============================================================================
+# CONFIGURATIONS
+# ============================================================================
+
+# Default tool lists (used by both configs)
+DEFAULT_MUSIC_TOOLS = ["get_albums_by_artist", "get_tracks_by_artist", "check_for_songs"]
+DEFAULT_CUSTOMER_TOOLS = ["get_customer_info"]
+
+CURRENT_MUSIC_TOOLS = ["get_albums_by_artist", "get_tracks_by_artist", "check_for_songs"]
+CURRENT_CUSTOMER_TOOLS = ["get_customer_info"]
+
+CONFIGS = {
+    "baseline": {
+        "general_prompt": GENERAL_PROMPT,
+        "music_prompt": MUSIC_PROMPT,
+        "customer_prompt": CUSTOMER_PROMPT,
+        "model_name": "gpt-4o",
+        "temperature": 0,
+        "streaming": False,  # False for faster evals
+        "music_tools": DEFAULT_MUSIC_TOOLS,
+        "customer_tools": DEFAULT_CUSTOMER_TOOLS,
+    },
+    "current": {
+        # Uses CURRENT_* prompts which you can modify during interview
+        "general_prompt": CURRENT_GENERAL_PROMPT,
+        "music_prompt": CURRENT_MUSIC_PROMPT,
+        "customer_prompt": CURRENT_CUSTOMER_PROMPT,
+        "model_name": "gpt-4o",
+        "temperature": 0,
+        "streaming": False,
+        "music_tools": CURRENT_MUSIC_TOOLS,
+        "customer_tools": CURRENT_CUSTOMER_TOOLS,
+    }
+}
+
+
+# ============================================================================
+# GRAPH BUILDER
+# ============================================================================
+
+def build_graph(config):
+    """
+    Build the complete multi-agent graph with specified configuration.
+    
+    Args:
+        config: Dictionary with keys:
+            - general_prompt: str (router agent prompt)
+            - music_prompt: str (music agent prompt)
+            - customer_prompt: str (customer agent prompt)
+            - model_name: str (e.g., "gpt-4o", "gpt-3.5-turbo")
+            - temperature: float (0-1, for response randomness)
+            - streaming: bool (whether to stream responses)
+            - music_tools: list[str] (tool names for music agent)
+            - customer_tools: list[str] (tool names for customer agent)
+    
+    Returns:
+        Compiled LangGraph workflow
+    """
+    
+    # ========================================================================
+    # SETUP: Extract Config & Initialize Core Components
+    # ========================================================================
+    
+    # Extract config parameters
+    general_prompt = config["general_prompt"]
+    music_prompt = config["music_prompt"]
+    customer_prompt = config["customer_prompt"]
+    model_name = config["model_name"]
+    temperature = config["temperature"]
+    streaming = config.get("streaming", False)
+    music_tool_names = config["music_tools"]
+    customer_tool_names = config["customer_tools"]
+    
+    # Setup database (from notebook Cell 5)
+    engine = get_engine_for_chinook_db()
+    db = SQLDatabase(engine)
+    
+    # Create LLM model (from notebook Cell 8)
+    model = ChatOpenAI(
+        temperature=temperature,
+        streaming=streaming,
+        model=model_name
+    )
+    
+    # ========================================================================
+    # TOOLS: Select tools based on config
+    # ========================================================================
+    # Create all available tools using factory
+    all_tools_dict = create_tools(db)
+    
+    # Select tools for each agent based on config
+    music_tools = [all_tools_dict[name] for name in music_tool_names]
+    customer_tools = [all_tools_dict[name] for name in customer_tool_names]
+    
     # --- Router Tool (Cell 25) ---
     class Router(BaseModel):
         """Call this if you are able to route the user to the appropriate representative."""
@@ -230,18 +287,13 @@ def build_graph(config):
     def get_customer_messages(messages):
         return [SystemMessage(content=customer_prompt)] + messages
     
-    customer_chain = get_customer_messages | model.bind_tools([get_customer_info])
+    customer_chain = get_customer_messages | model.bind_tools(customer_tools)
     
     # --- Music Agent Chain (Cell 22) ---
-    # To modify which tools music agent can use, add/remove from this list
     def get_song_messages(messages):
         return [SystemMessage(content=music_prompt)] + messages
     
-    song_recc_chain = get_song_messages | model.bind_tools([
-        get_albums_by_artist,
-        get_tracks_by_artist,
-        check_for_songs
-    ])
+    song_recc_chain = get_song_messages | model.bind_tools(music_tools)
     
     # --- General/Router Agent Chain (Cell 26) ---
     def get_messages(messages):
@@ -314,9 +366,8 @@ def build_graph(config):
     # ========================================================================
     
     # Tools node - executes all tool calls (Cell 31)
-    # To add a new tool, add it to this list
-    tools = [get_albums_by_artist, get_tracks_by_artist, check_for_songs, get_customer_info]
-    tools_node = ToolNode(tools)
+    all_selected_tools = music_tools + customer_tools
+    tools_node = ToolNode(all_selected_tools)
     
     # Agent nodes - each filters routes, runs chain, tags with name (Cell 33)
     general_node = _filter_out_routes | chain | partial(add_name, name="general")
