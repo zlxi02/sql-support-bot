@@ -751,17 +751,17 @@ error_handling_tests = [
 ]
 
 # ============================================================================
-# H. MULTI-TURN CONVERSATIONS (5 tests)
+# H. MULTI-TURN CONVERSATIONS (6 tests)
 # ============================================================================
 # Goal: Test context retention and conversation flow
-# Coverage: Music (3), Customer (2)
+# Coverage: Music (4), Customer (2)
 # Note: Multi-turn evaluation requires more complex setup
 # ============================================================================
 
 multi_turn_tests = [
     
     # ------------------------------------------------------------------------
-    # H1. Music Conversations (3 tests) - Follow-ups and multi-request queries
+    # H1. Music Conversations (4 tests) - Follow-ups and multi-request queries
     # ------------------------------------------------------------------------
     {
         "inputs": {"messages": [HumanMessage(content="I'm looking for music")]},
@@ -794,6 +794,20 @@ multi_turn_tests = [
             "expected_agent": "music",
             "requires_multiple_tools": True,
             "description": "Request for both albums and songs"
+        }
+    },
+    {
+        "inputs": {"messages": [HumanMessage(content="Get albums by Led Zeppelin and then get their tracks")]},
+        "outputs": {
+            "test_id": "H1.4",
+            "category": "multi_turn",
+            "subcategory": "music_sequential_tools",
+            "expected_agent": "music",
+            "expected_tools_called": ["get_albums_by_artist", "get_tracks_by_artist"],
+            "check_tool_order": False,  # Order doesn't matter - both should be called
+            "expected_params": {"artist": "Led Zeppelin"},
+            "response_should_contain": ["album", "track"],
+            "description": "MULTI-TOOL: Validates agent calls multiple tools sequentially for comprehensive music query"
         }
     },
     

@@ -222,11 +222,11 @@
             <tbody>
                 <tr>
                     <td><strong>1. Test Dataset</strong></td>
-                    <td>55 comprehensive tests across 8 categories (happy path, routing, tool selection, parameters, data handling, edge cases, errors, multi-turn)</td>
+                    <td>56 comprehensive tests across 8 categories (happy path, routing, tool selection, parameters, data handling, edge cases, errors, multi-turn)</td>
                 </tr>
                 <tr>
                     <td><strong>2. Evaluators</strong></td>
-                    <td>7 evaluator functions checking routing, tools, parameters, and error handling with detailed pass/fail comments (e.g. get_tool_calls_from_trace(run))</td>
+                    <td>8 evaluator functions checking routing, tools, parameters, multi-tool calls, and error handling with detailed pass/fail comments (e.g. check_multiple_tools_called, get_tool_calls_from_trace(run))</td>
                 </tr>
                 <tr>
                     <td><strong>3. Evaluation Harness</strong></td>
@@ -311,9 +311,9 @@
                 <tr>
                     <td><strong>Advanced Features</strong></td>
                     <td><strong>H. Multi-Turn</strong></td>
-                    <td>5</td>
-                    <td>9%</td>
-                    <td>Conversation context, follow-up queries</td>
+                    <td>6</td>
+                    <td>11%</td>
+                    <td>Conversation context, follow-up queries, multi-tool sequential calls</td>
                 </tr>
             </tbody>
         </table>
@@ -402,6 +402,11 @@
                     <td><code>check_no_errors(run, example)</code></td>
                     <td>No execution errors?</td>
                     <td>Score + "No errors" or "Errors detected"</td>
+                </tr>
+                <tr>
+                    <td><code>check_multiple_tools_called(run, example)</code></td>
+                    <td>Multiple tools called (for multi-tool requests)?</td>
+                    <td>Score + "All 2 tools called: ['get_albums_by_artist', 'get_tracks_by_artist']" or "Missing tools: ['get_tracks_by_artist']"</td>
                 </tr>
             </tbody>
         </table>

@@ -265,7 +265,7 @@
         
         <p><strong>Overall Goal:</strong> Provide comprehensive test coverage that validates core functionality, measures decision-making accuracy, and ensures robustness under edge cases.</p>
         
-        <p style="margin-top: 15px;"><strong>Test Suite Overview:</strong> 55 tests across 8 categories (Music Agent: 30 tests | Customer Agent: 20 tests | General Agent: 5 tests)</p>
+        <p style="margin-top: 15px;"><strong>Test Suite Overview:</strong> 56 tests across 8 categories (Music Agent: 31 tests | Customer Agent: 20 tests | General Agent: 5 tests)</p>
         
         <table style="margin-top: 15px;">
             <thead>
@@ -439,7 +439,7 @@
             </tr>
             <tr class="category-h">
                 <td class="category-label">H. Multi-turn</td>
-                <td>5</td>
+                <td>6</td>
                 <td>Conversation flow and context</td>
                 <td>
                     Ask for missing info<br>
@@ -448,7 +448,7 @@
                     Multiple tools
                 </td>
                 <td>
-                    Music Conversations (3)<br>
+                    Music Conversations (4)<br>
                     Customer Conversations (2)
                 </td>
             </tr>
@@ -978,9 +978,9 @@
     </table>
 
     <!-- CATEGORY H: Multi-turn -->
-    <h3>H. Multi-turn Conversation Tests (5 tests)</h3>
+    <h3>H. Multi-turn Conversation Tests (6 tests)</h3>
     <div class="section-intro section-header-category category-h">
-        <p>Test conversational capabilities: asking for missing information, handling multi-part requests, and maintaining context across interactions.</p>
+        <p>Test conversational capabilities: asking for missing information, handling multi-part requests, maintaining context across interactions, and calling multiple tools sequentially.</p>
     </div>
     
     <table class="category-h">
@@ -1014,6 +1014,13 @@
                 <td class="test-question">"Show me both albums and songs by Aerosmith"</td>
                 <td><span class="badge badge-music">music</span></td>
                 <td>Call multiple tools</td>
+            </tr>
+            <tr>
+                <td>H1.4</td>
+                <td>Music Sequential Tools</td>
+                <td class="test-question">"Get albums by Led Zeppelin and then get their tracks"</td>
+                <td><span class="badge badge-music">music</span></td>
+                <td>Validate both get_albums_by_artist and get_tracks_by_artist are called</td>
             </tr>
             <tr>
                 <td>H2.1</td>
